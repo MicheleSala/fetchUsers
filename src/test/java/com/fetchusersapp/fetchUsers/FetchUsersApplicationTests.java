@@ -39,6 +39,28 @@ class FetchUsersApplicationTests {
 			.perform(get("/my-api/users")
 				.contentType("application/json")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith("application/json"));
   	}
+
+	@Test 
+	void givenCall_expectCorrectJsonStruct() throws Exception {
+		MvcResult mvc = mockMvc
+			.perform(get("/my-api/users"))
+			.andReturn(); 
+		JSONObject json = new JSONObject(mvc.getResponse().getContentAsString());
+		assertEquals(json.has("data"), true);
+	}
+
+	@Test 
+	void givenCall_expectCorrectInnerJsonStruct() throws Exception {
+		MvcResult mvc = mockMvc
+			.perform(get("/my-api/users"))
+			.andReturn(); 
+		JSONObject json = new JSONObject(mvc.getResponse().getContentAsString()).getJSONArray("data").getJSONObject(0); 
+		assertEquals(json.has("id"), true);
+		assertEquals(json.has("name"), true);
+		assertEquals(json.has("email"), true);
+		assertEquals(json.has("gender"), true);
+		assertEquals(json.has("status"), true);
+	}
 	
 	@Test 
 	void givenGenderMale_expectOnlyMale() throws Exception {
